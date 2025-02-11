@@ -1,7 +1,7 @@
-import { Tabs } from 'expo-router';
+// Remove NavigationContainer wrapper in App.js
+import { Tabs } from 'expo-router'; // Keep expo-router's Tabs for navigation
 import React from 'react';
 import { Platform } from 'react-native';
-
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
