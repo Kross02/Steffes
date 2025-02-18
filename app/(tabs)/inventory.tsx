@@ -3,11 +3,11 @@ import { StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
-export default function AuctionsScreen() {
+export default function InventoryScreen() {
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="title">Auctions</ThemedText>
-      <ThemedText>Your auctions will be displayed here</ThemedText>
+      <ThemedText type="title">Inventory</ThemedText>
+      <ThemedText>Your inventory will be displayed here</ThemedText>
     </ThemedView>
   );
 }
