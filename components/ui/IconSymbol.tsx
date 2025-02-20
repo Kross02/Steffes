@@ -7,7 +7,9 @@ export type IconName =
   | 'send'
   | 'person'
   | 'inventory'
-  | 'approval';
+  | 'approval'
+  | 'search';
+  
 
 export function IconSymbol({
   name,
