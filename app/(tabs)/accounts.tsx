@@ -9,7 +9,6 @@ export default function AccountsScreen() {
     <ThemedView style={styles.container}>
       <ThemedText type="title">Accounts</ThemedText>
       <ThemedText>Your accounts will be displayed here</ThemedText>
-      <SimpleExample />
     </ThemedView>
   );
 }
