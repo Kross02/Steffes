@@ -1,5 +1,5 @@
 import { CameraView, CameraType, CameraMode, useCameraPermissions } from 'expo-camera';
-import React,{ useRef, useState,  } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button, Pressable, Text, View } from 'react-native';
 import { StyleSheet } from 'react-native';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
@@ -7,8 +7,7 @@ import { Image } from "expo-image";
 import { AntDesign } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { FontAwesome6 } from "@expo/vector-icons";
-import TagScrollView from './TagScrollView';
-
+import SimpleExample from './TagScrollView';
 
 export function CameraModule() {
     const tabBarHeight = useBottomTabBarHeight();
@@ -18,7 +17,6 @@ export function CameraModule() {
     const [mode, setMode] = useState<CameraMode>("picture");
     const [facing, setFacing] = useState<CameraType>("back");
     const [recording, setRecording] = useState(false);
-    const [selectedTag, setSelectedTag] = useState("1");
 
     if (!permission) {
         return <View />;
@@ -115,6 +113,8 @@ export function CameraModule() {
                         <FontAwesome6 name="rotate-left" size={32} color="white" />
                     </Pressable>
                 </View>
+                
+                <SimpleExample />
             </CameraView>
         );
     };
