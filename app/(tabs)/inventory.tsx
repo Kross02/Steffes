@@ -56,10 +56,10 @@ export default function InventoryScreen() {
   
   const handleCreateLot = () => {
     closeMenu();
-    router.push('/lot/create');
+    router.push('/lot/create-new');
   };
   
-  const handleLotPress = (lot) => {
+  const handleLotPress = (lot: { id: string; title: string; lotNumber: string; tagNumber: string; imageUrl: string }) => {
     router.push({
       pathname: '/lot/edit',
       params: { lotId: lot.id }

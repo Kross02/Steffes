@@ -1,6 +1,7 @@
 // services/database.ts
 import { CosmosClient, Container } from "@azure/cosmos";
 import { Lot, Picture } from "../types/lot";
+import { config } from "../config";
 
 class DatabaseService {
   private client: CosmosClient;
@@ -8,20 +9,15 @@ class DatabaseService {
   private container: Container;
 
   constructor() {
-    if (!process.env.COSMOS_ENDPOINT || !process.env.COSMOS_KEY || 
-        !process.env.COSMOS_DATABASE || !process.env.COSMOS_CONTAINER) {
-      throw new Error("Missing required environment variables");
-    }
-
     this.client = new CosmosClient({
-      endpoint: process.env.COSMOS_ENDPOINT,
-      key: process.env.COSMOS_KEY
+      endpoint: config.cosmos.endpoint,
+      key: config.cosmos.key
     });
 
-    this.database = process.env.COSMOS_DATABASE;
+    this.database = config.cosmos.database;
     this.container = this.client
       .database(this.database)
-      .container(process.env.COSMOS_CONTAINER);
+      .container(config.cosmos.container);
   }
 
   // Create a new lot
