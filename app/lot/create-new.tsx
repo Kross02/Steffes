@@ -1,18 +1,29 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
-import { TextInput, Button } from 'react-native-paper';
+import { TextInput, Button, Menu, IconButton } from 'react-native-paper';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { useRouter } from 'expo-router';
 import { dbService } from '@/services/database';
 
-export default function CreateLotScreen() {
+export default function CreateNewLotScreen() {
   const router = useRouter();
   const [title, setTitle] = useState('');
   const [lotNumber, setLotNumber] = useState('');
   const [tagNumber, setTagNumber] = useState('');
+  const [description, setDescription] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [menuVisible, setMenuVisible] = useState(false);
+
+  const openMenu = () => setMenuVisible(true);
+  const closeMenu = () => setMenuVisible(false);
+
+  const handleEditPhotos = () => {
+    closeMenu();
+    // Dummy function for now
+    console.log('Edit Photos clicked');
+  };
 
   const handleSubmit = async () => {
     // Basic validation
@@ -38,6 +49,7 @@ export default function CreateLotScreen() {
         title: title.trim(),
         lotNumber: lotNumber.trim(),
         tagNumber: tagNumber.trim(),
+        description: description.trim(),
         status: 'draft',
         pictures: []
       });
@@ -56,9 +68,25 @@ export default function CreateLotScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <ThemedText type="title" style={styles.header}>Create New Lot</ThemedText>
+      <View style={styles.headerContainer}>
+        <ThemedText type="title" style={styles.header}>Create Lot</ThemedText>
         
+        <Menu
+          visible={menuVisible}
+          onDismiss={closeMenu}
+          anchor={
+            <IconButton
+              icon="dots-vertical"
+              size={24}
+              onPress={openMenu}
+            />
+          }
+        >
+          <Menu.Item onPress={handleEditPhotos} title="Edit Photos" />
+        </Menu>
+      </View>
+      
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         {error && (
           <ThemedText style={styles.errorText}>{error}</ThemedText>
         )}
@@ -86,6 +114,16 @@ export default function CreateLotScreen() {
             onChangeText={setTagNumber}
             style={styles.input}
             mode="outlined"
+          />
+          
+          <TextInput
+            label="Description"
+            value={description}
+            onChangeText={setDescription}
+            style={styles.input}
+            mode="outlined"
+            multiline
+            numberOfLines={4}
           />
           
           <View style={styles.buttonContainer}>
@@ -117,14 +155,21 @@ export default function CreateLotScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 10,
+    paddingTop: 50,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: 15,
+    paddingHorizontal: 10,
+  },
+  header: {
+    flex: 1,
   },
   scrollContent: {
     padding: 16,
-    paddingTop: 50,
-  },
-  header: {
-    marginBottom: 20,
-    textAlign: 'center',
   },
   formContainer: {
     marginTop: 10,

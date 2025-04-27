@@ -9,6 +9,7 @@ export default function LotLayout() {
         options={{
           title: 'Create Lot',
           presentation: 'modal',
+          headerShown: false,
         }}
       />
       <Stack.Screen
