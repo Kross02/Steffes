@@ -4,8 +4,12 @@ import ScrollPicker from "react-native-wheel-scrollview-picker";
 
 export default class SimpleExample extends Component {
   state = {
-    selectedValue: "2",
-    selectedIndex: 1
+    selectedValue: "Engine",
+    selectedIndex: 0
+  };
+
+  getCurrentTag = () => {
+    return this.state.selectedValue;
   };
 
   render() {

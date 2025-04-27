@@ -13,7 +13,9 @@ export function CameraModule() {
     const tabBarHeight = useBottomTabBarHeight();
     const [permission, requestPermission] = useCameraPermissions();
     const ref = useRef<CameraView>(null);
+    const tagRef = useRef<SimpleExample>(null);
     const [uri, setUri] = useState<string | null>(null);
+    const [selectedTag, setSelectedTag] = useState<string | null>(null);
     const [mode, setMode] = useState<CameraMode>("picture");
     const [facing, setFacing] = useState<CameraType>("back");
     const [recording, setRecording] = useState(false);
@@ -34,7 +36,14 @@ export function CameraModule() {
     const takePicture = async () => {
         const photo = await ref.current?.takePictureAsync();
         if (photo) {
+            const currentTag = tagRef.current?.state.selectedValue;
+            setSelectedTag(currentTag || null);
             setUri(photo.uri);
+            
+            console.log({
+                photoUri: photo.uri,
+                tag: currentTag
+            });
         }
     };
 
@@ -65,7 +74,13 @@ export function CameraModule() {
                     contentFit="contain"
                     style={{ width: 300, aspectRatio: 1 }}
                 />
-                <Button onPress={() => setUri(null)} title="Take another picture" />
+                {selectedTag && (
+                    <Text style={styles.tagText}>Tagged as: {selectedTag}</Text>
+                )}
+                <Button onPress={() => {
+                    setUri(null);
+                    setSelectedTag(null);
+                }} title="Take another picture" />
             </View>
         );
     };
@@ -114,7 +129,7 @@ export function CameraModule() {
                     </Pressable>
                 </View>
                 
-                <SimpleExample />
+                <SimpleExample ref={tagRef} />
             </CameraView>
         );
     };
@@ -163,5 +178,11 @@ const styles = StyleSheet.create({
         width: 70,
         height: 70,
         borderRadius: 50,
+    },
+    tagText: {
+        color: 'black',
+        fontSize: 16,
+        textAlign: 'center',
+        marginTop: 10,
     },
 });

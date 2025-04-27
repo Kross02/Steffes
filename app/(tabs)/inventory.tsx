@@ -5,6 +5,7 @@ import { ThemedView } from '@/components/ThemedView';
 import { LotCard } from '@/components/LotCard';
 import { Menu, IconButton } from 'react-native-paper';
 import { useState } from 'react';
+import { useRouter } from 'expo-router';
 
 // Sample data for lots
 const sampleLots = [
@@ -48,14 +49,21 @@ const sampleLots = [
 export default function InventoryScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const [menuVisible, setMenuVisible] = useState(false);
+  const router = useRouter();
   
   const openMenu = () => setMenuVisible(true);
   const closeMenu = () => setMenuVisible(false);
   
   const handleCreateLot = () => {
     closeMenu();
-    // Add your create lot logic here
-    console.log('Create lot pressed');
+    router.push('/lot/create');
+  };
+  
+  const handleLotPress = (lot) => {
+    router.push({
+      pathname: '/lot/edit',
+      params: { lotId: lot.id }
+    });
   };
   
   return (
@@ -88,6 +96,7 @@ export default function InventoryScreen() {
             tagNumber={item.tagNumber}
             imageUrl={item.imageUrl}
             index={index}
+            onPress={() => handleLotPress(item)}
           />
         )}
         style={styles.list}
