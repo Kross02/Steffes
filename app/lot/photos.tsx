@@ -22,8 +22,11 @@ export default function PhotosScreen() {
 
   const handleThumbnailPress = (photoId: string) => {
     router.push({
-      pathname: '/lot/photo-detail',
-      params: { photoId }
+      pathname: '/lot/[id]/photo-detail',
+      params: { 
+        id: '1', // TODO: Get the actual lot ID
+        photoId 
+      }
     });
   };
 
