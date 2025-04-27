@@ -21,6 +21,7 @@ export default function CreateNewLotScreen() {
 
   const handleEditPhotos = () => {
     closeMenu();
+    router.push('/lot/photos');
     // Dummy function for now
     console.log('Edit Photos clicked');
   };

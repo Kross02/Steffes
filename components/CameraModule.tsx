@@ -2,15 +2,17 @@ import { CameraView, CameraType, CameraMode, useCameraPermissions } from 'expo-c
 import React, { useRef, useState } from 'react';
 import { Button, Pressable, Text, View } from 'react-native';
 import { StyleSheet } from 'react-native';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { Image } from "expo-image";
 import { AntDesign } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { FontAwesome6 } from "@expo/vector-icons";
 import SimpleExample from './TagScrollView';
 
-export function CameraModule() {
-    const tabBarHeight = useBottomTabBarHeight();
+interface CameraModuleProps {
+  onPhotoTaken?: (photoUri: string, tag: string | null) => void;
+}
+
+export function CameraModule({ onPhotoTaken }: CameraModuleProps) {
     const [permission, requestPermission] = useCameraPermissions();
     const ref = useRef<CameraView>(null);
     const tagRef = useRef<SimpleExample>(null);
@@ -40,10 +42,9 @@ export function CameraModule() {
             setSelectedTag(currentTag || null);
             setUri(photo.uri);
             
-            console.log({
-                photoUri: photo.uri,
-                tag: currentTag
-            });
+            if (onPhotoTaken) {
+                onPhotoTaken(photo.uri, currentTag || null);
+            }
         }
     };
 
@@ -135,7 +136,7 @@ export function CameraModule() {
     };
 
     return (
-        <View style={[styles.container, { marginBottom: tabBarHeight }]}>
+        <View style={styles.container}>
             {uri ? renderPicture() : renderCamera()}
         </View>
     );
@@ -156,7 +157,7 @@ const styles = StyleSheet.create({
     },
     shutterContainer: {
         position: "absolute",
-        bottom: 44,
+        bottom: 100,
         left: 0,
         width: "100%",
         alignItems: "center",
