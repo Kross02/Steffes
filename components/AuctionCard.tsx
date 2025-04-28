@@ -9,13 +9,13 @@ type AuctionCardProps = {
   index: number;
 };
 
-export function AuctionCard({ title, location, closingDate, imageUrl, index }: AuctionCardProps) {
+export function AuctionCard({ title, location, closingDate, closingTime, imageUrl, index }: AuctionCardProps) {
   return (
     <View style={[styles.card, { backgroundColor: index % 2 === 0 ? '#f5f5f5' : '#ffffff' }]}>
       <View style={styles.contentContainer}>
         <ThemedText type="defaultSemiBold" style={styles.title}>{title}</ThemedText>
         <ThemedText style={styles.location}>{location}</ThemedText>
-        <ThemedText style={styles.date}>Closes: {closingDate}</ThemedText>
+        <ThemedText style={styles.date}>CLOSING {closingDate} | {closingTime}</ThemedText>
       </View>
       <Image source={{ uri: imageUrl }} style={styles.image} />
     </View>

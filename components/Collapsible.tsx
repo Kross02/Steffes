@@ -18,10 +18,10 @@ export function Collapsible({ children, title }: PropsWithChildren & { title: st
         onPress={() => setIsOpen((value) => !value)}
         activeOpacity={0.8}>
         <IconSymbol
-          name="chevron.right"
+          name='send'
           size={18}
           weight="medium"
-          color={theme === 'light' ? Colors.light.icon : Colors.dark.icon}
+          color='light'
           style={{ transform: [{ rotate: isOpen ? '90deg' : '0deg' }] }}
         />
 

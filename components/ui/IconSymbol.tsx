@@ -14,13 +14,15 @@ export type IconName =
 export function IconSymbol({
   name,
   size = 24,
-  color,
+  color = "#d51f2b",
+  weight,
   style,
 }: {
   name: IconName;
   size?: number;
   color: string;
+  weight?: string;
   style?: StyleProp<ViewStyle>;
 }) {
-  return <MaterialIcons name={name} size={size} color={color} style={style} />;
+  return <MaterialIcons name={name} size={size} color={color} weight={weight} />;
 }

@@ -38,7 +38,6 @@ export default class SimpleExample extends Component {
               });
             }}
             wrapperHeight={180}
-            wrapperWidth={60}
             wrapperBackground="#00000000"
             itemHeight={60}
             highlightColor="transparent"

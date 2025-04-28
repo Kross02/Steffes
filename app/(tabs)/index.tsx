@@ -11,73 +11,82 @@ const DUMMY_AUCTIONS = [
     id: '1',
     title: 'Farm Equipment Auction',
     location: 'Fargo, ND',
-    closingDate: 'Mar 15, 2024',
+    closingDate: 'Mar 15',
+    closingTime: '10:00 AM',
     imageUrl: 'https://picsum.photos/200/200?random=1',
   },
   {
     id: '2',
     title: 'Construction Equipment Sale',
     location: 'Bismarck, ND',
-    closingDate: 'Mar 18, 2024',
+    closingDate: 'Mar 18',
+    closingTime: '11:00 AM',
     imageUrl: 'https://picsum.photos/200/200?random=2',
   },
   {
     id: '3',
     title: 'Bradenburg Farm Equipment Auction',
     location: 'Fargo, ND',
-    closingDate: 'Mar 15, 2024',
+    closingDate: 'Mar 15',
+    closingTime: '10:00 AM',
     imageUrl: 'https://picsum.photos/200/200?random=3',
   },
   {
     id: '4',
     title: 'Red River Valley Farm Equipment Auction',
     location: 'Grand Forks, ND',
-    closingDate: 'Mar 18, 2024',
+    closingDate: 'Mar 18',
+    closingTime: '10:00 AM',
     imageUrl: 'https://picsum.photos/200/200?random=4',
   },
   {
     id: '5',
     title: 'Tim and Sheri Wegner Retirement Auction',
     location: 'Bulla, ND',
-    closingDate: 'Mar 15, 2024',
+    closingDate: 'Mar 15',
+    closingTime: '10:00 AM',
     imageUrl: 'https://picsum.photos/200/200?random=5',
   },
   {
     id: '6',
     title: '5 Star Dairy LLC Auction',
     location: 'Stewartville, MN',
-    closingDate: 'Mar 18, 2024',
+    closingDate: 'Mar 18',
+    closingTime: '10:00 AM',
     imageUrl: 'https://picsum.photos/200/200?random=6',
   },
   {
     id: '7',
     title: 'Retterrath Farms Auction',
     location: 'Bombay, ND',
-    closingDate: 'Mar 15, 2024',
+    closingDate: 'Mar 15',
+    closingTime: '10:00 AM',
     imageUrl: 'https://picsum.photos/200/200?random=7',
   },
   {
     id: '8',
     title: 'Jason Kadrmas Auction',
     location: 'Montecello, MN',
-    closingDate: 'Mar 18, 2024',
+    closingDate: 'Mar 18',
+    closingTime: '10:00 AM',
     imageUrl: 'https://picsum.photos/200/200?random=8',
   },
   {
     id: '9',
     title: 'Matjcek Farms Excess Equipment Auction',
     location: 'Hillsboro, ND',
-    closingDate: 'Mar 15, 2024',
+    closingDate: 'Mar 15',
+    closingTime: '10:00 AM',
     imageUrl: 'https://picsum.photos/200/200?random=9',
   },
   {
     id: '10',
     title: 'Norman County, MN Land Auction',
     location: 'Norman County, MN',
-    closingDate: 'Mar 18, 2024',
+    closingDate: 'Mar 18',
+    closingTime: '10:00 AM',
     imageUrl: 'https://picsum.photos/200/200?random=10',
   },
-  // Add 8 more similar items with different dates and locations
 ];
 
 export default function AuctionsScreen() {
@@ -105,6 +114,7 @@ export default function AuctionsScreen() {
             title={auction.title}
             location={auction.location}
             closingDate={auction.closingDate}
+            closingTime={auction.closingTime}
             imageUrl={auction.imageUrl}
           />
         ))}
