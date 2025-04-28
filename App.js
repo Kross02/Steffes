@@ -1,45 +1,34 @@
-// Remove NavigationContainer wrapper in App.js
-import { Tabs } from 'expo-router'; // Keep expo-router's Tabs for navigation
+import { Tabs } from 'expo-router'; // Import Tabs from expo-router
 import React from 'react';
 import { Platform } from 'react-native';
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { IconSymbol } from '@/components/ui/IconSymbol';  // If you have custom icons for tabs
+import TabBarBackground from '@/components/ui/TabBarBackground'; // Custom background for tab bar
+import { Colors } from '@/constants/Colors'; // Colors from your theme
+import { useColorScheme } from '@/hooks/useColorScheme'; // Hook for color scheme (light/dark)
 
-export default function TabLayout() {
+export default function App() {
   const colorScheme = useColorScheme();
 
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
+        headerShown: false,  // Disable headers for tabs here
+        tabBarButton: HapticTab,  // Custom tab bar button (if any)
+        tabBarBackground: TabBarBackground,  // Custom tab bar background
         tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
+          ios: { position: 'absolute' },
           default: {},
         }),
       }}>
       <Tabs.Screen
-        name="index"
+        name="auctions"  // Ensure this is linked to AuctionsPage
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: 'Auctions',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="auction" color={color} />,
         }}
       />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
+      {/* Add other tabs for Inventory, Profile, etc. */}
     </Tabs>
   );
 }
