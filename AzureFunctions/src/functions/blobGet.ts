@@ -4,7 +4,7 @@ const storageAccountName = process.env.BLOB_ACCOUNT_NAME || ""; // Your Azure St
 const blobContainerName = process.env.BLOB_CONTAINER_NAME || "pictures"; // Your container name
 
 // Function to return the URL for the image based on its fileName
-export async function getImageUrl(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
+export async function blobGet(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
   const fileName = request.params.fileName;
 
   if (!fileName) {
@@ -26,9 +26,9 @@ export async function getImageUrl(request: HttpRequest, context: InvocationConte
   };
 }
 
-app.http('getImageUrl', {
+app.http('blobGet', {
   methods: ['GET'],
   authLevel: 'anonymous',
-  route: 'getImageUrl/{fileName}',
-  handler: getImageUrl
+  route: 'blobGet/{fileName}',
+  handler: blobGet
 });
