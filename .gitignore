@@ -40,3 +40,7 @@ app-example
 .env
 #configuration
 config.ts
+
+# Azure Functions
+local.settings.json
+
