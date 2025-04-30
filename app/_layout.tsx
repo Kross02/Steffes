@@ -5,7 +5,8 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
-import { PaperProvider } from 'react-native-paper';
+import { PaperProvider, MD3LightTheme, MD3DarkTheme } from 'react-native-paper';
+import { Colors } from '@/constants/Colors';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -19,6 +20,25 @@ export const unstable_settings = {
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+
+// Create custom themes for Paper
+const customLightTheme = {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    primary: '#E31837', // Steffes red
+    secondary: '#E31837',
+  },
+};
+
+const customDarkTheme = {
+  ...MD3DarkTheme,
+  colors: {
+    ...MD3DarkTheme.colors,
+    primary: '#E31837', // Steffes red
+    secondary: '#E31837',
+  },
+};
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
@@ -48,7 +68,7 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-    <PaperProvider>
+    <PaperProvider theme={colorScheme === 'dark' ? customDarkTheme : customLightTheme}>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

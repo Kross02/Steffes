@@ -6,6 +6,7 @@ import { useLocalSearchParams } from 'expo-router';
 
 export default function EditLotScreen() {
   const { lotId } = useLocalSearchParams<{ lotId: string }>();
+  
 
   return (
     <ThemedView style={styles.container}>
