@@ -4,13 +4,14 @@ import { TextInput, Button, Menu, IconButton } from 'react-native-paper';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { useRouter } from 'expo-router';
-import { dbService } from '@/services/database';
+import { azureService } from '@/services/azureService';
 
 export default function CreateNewLotScreen() {
   const router = useRouter();
   const [title, setTitle] = useState('');
   const [lotNumber, setLotNumber] = useState('');
   const [tagNumber, setTagNumber] = useState('');
+  const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -45,11 +46,12 @@ export default function CreateNewLotScreen() {
     setError(null);
 
     try {
-      // Create the lot in the database
-      const newLot = await dbService.createLot({
+      // Create the lot using Azure service
+      const newLot = await azureService.createLot({
         title: title.trim(),
         lotNumber: lotNumber.trim(),
         tagNumber: tagNumber.trim(),
+        category: category.trim(),
         description: description.trim(),
         status: 'draft',
         pictures: []
@@ -118,6 +120,14 @@ export default function CreateNewLotScreen() {
           />
           
           <TextInput
+            label="Category"
+            value={category}
+            onChangeText={setCategory}
+            style={styles.input}
+            mode="outlined"
+          />
+          
+          <TextInput
             label="Description"
             value={description}
             onChangeText={setDescription}
@@ -163,7 +173,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical: 15,
+    marginVertical: 5,
     paddingHorizontal: 10,
   },
   header: {
@@ -173,15 +183,15 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   formContainer: {
-    marginTop: 10,
+    marginTop: 5,
   },
   input: {
-    marginBottom: 16,
+    marginBottom: 6,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 20,
+    marginTop: 5,
   },
   button: {
     flex: 1,
