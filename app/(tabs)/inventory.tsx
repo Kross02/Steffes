@@ -4,52 +4,38 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { LotCard } from '@/components/LotCard';
 import { Menu, IconButton } from 'react-native-paper';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'expo-router';
+import { azureService } from '@/services/azureService';
+import { Lot } from '@/types/lot';
 
-// Sample data for lots
-const sampleLots = [
-  {
-    id: '1',
-    title: 'John Deere Tractor',
-    lotNumber: '1001',
-    tagNumber: 'T-5432',
-    imageUrl: 'https://picsum.photos/id/111/200/200',
-  },
-  {
-    id: '2',
-    title: 'Caterpillar Excavator',
-    lotNumber: '1002',
-    tagNumber: 'T-6789',
-    imageUrl: 'https://picsum.photos/id/133/200/200',
-  },
-  {
-    id: '3',
-    title: 'Kubota Mower',
-    lotNumber: '1003',
-    tagNumber: 'T-1234',
-    imageUrl: 'https://picsum.photos/id/155/200/200',
-  },
-  {
-    id: '4',
-    title: 'Ford F-150 Truck',
-    lotNumber: '1004',
-    tagNumber: 'T-8765',
-    imageUrl: 'https://picsum.photos/id/183/200/200',
-  },
-  {
-    id: '5',
-    title: 'Bobcat Skid Steer',
-    lotNumber: '1005',
-    tagNumber: 'T-9012',
-    imageUrl: 'https://picsum.photos/id/192/200/200',
-  },
-];
+// Default image URL for lots without pictures
+const DEFAULT_IMAGE_URL = 'https://picsum.photos/id/111/200/200';
 
 export default function InventoryScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const [menuVisible, setMenuVisible] = useState(false);
+  const [lots, setLots] = useState<Lot[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  
+  useEffect(() => {
+    loadLots();
+  }, []);
+
+  const loadLots = async () => {
+    try {
+      setLoading(true);
+      const allLots = await azureService.getAllLots();
+      setLots(allLots);
+    } catch (err) {
+      console.error('Error loading lots:', err);
+      setError('Failed to load lots');
+    } finally {
+      setLoading(false);
+    }
+  };
   
   const openMenu = () => setMenuVisible(true);
   const closeMenu = () => setMenuVisible(false);
@@ -59,11 +45,17 @@ export default function InventoryScreen() {
     router.push('/lot/create-new');
   };
   
-  const handleLotPress = (lot: { id: string; title: string; lotNumber: string; tagNumber: string; imageUrl: string }) => {
+  const handleLotPress = (lot: Lot) => {
     router.push({
       pathname: '/lot/edit',
       params: { lotId: lot.id }
     });
+  };
+
+  const getImageUrl = (lot: Lot) => {
+    return lot.pictures && lot.pictures.length > 0 
+      ? lot.pictures[0].url 
+      : DEFAULT_IMAGE_URL;
   };
   
   return (
@@ -85,16 +77,20 @@ export default function InventoryScreen() {
           <Menu.Item onPress={handleCreateLot} title="Create Lot" />
         </Menu>
       </View>
+
+      {error && (
+        <ThemedText style={styles.errorText}>{error}</ThemedText>
+      )}
       
       <FlatList
-        data={sampleLots}
+        data={lots}
         keyExtractor={(item) => item.id}
         renderItem={({ item, index }) => (
           <LotCard
             title={item.title}
             lotNumber={item.lotNumber}
             tagNumber={item.tagNumber}
-            imageUrl={item.imageUrl}
+            imageUrl={getImageUrl(item)}
             index={index}
             onPress={() => handleLotPress(item)}
           />
@@ -104,6 +100,8 @@ export default function InventoryScreen() {
           styles.listContent,
           { paddingBottom: tabBarHeight }
         ]}
+        refreshing={loading}
+        onRefresh={loadLots}
       />
     </ThemedView>
   );
@@ -113,7 +111,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    paddingTop: 50, // Add top padding for clearance
+    paddingTop: 50,
   },
   headerContainer: {
     flexDirection: 'row',
@@ -131,5 +129,10 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingBottom: 20,
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginVertical: 10,
   },
 });

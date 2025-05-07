@@ -33,5 +33,96 @@ export const azureService = {
       console.error('Network or parsing error:', error);
       throw error;
     }
+  },
+
+  async getAllLots(): Promise<Lot[]> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/lotReadAll`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`Failed to get lots: ${errorText}`);
+      }
+
+      const lots = await response.json();
+      return lots;
+    } catch (error) {
+      console.error('Error fetching lots:', error);
+      throw error;
+    }
+  },
+
+  async getLotById(id: string): Promise<Lot> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/lotReadID/${id}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`Failed to get lot: ${errorText}`);
+      }
+
+      const lot = await response.json();
+      return lot;
+    } catch (error) {
+      console.error('Error fetching lot:', error);
+      throw error;
+    }
+  },
+
+  async updateLot(id: string, lotData: Partial<Lot>): Promise<Lot> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/lotUpdate/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(lotData)
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`Failed to update lot: ${errorText}`);
+      }
+
+      const updatedLot = await response.json();
+      return updatedLot;
+    } catch (error) {
+      console.error('Error updating lot:', error);
+      throw error;
+    }
+  },
+
+  async deleteLot(id: string): Promise<void> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/lotDelete/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`Failed to delete lot: ${errorText}`);
+      }
+    } catch (error) {
+      console.error('Error deleting lot:', error);
+      throw error;
+    }
   }
 }; 
