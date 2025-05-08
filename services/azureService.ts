@@ -126,5 +126,53 @@ export const azureService = {
       console.error('Error deleting lot:', error);
       throw error;
     }
+  },
+
+  async uploadPhoto(photoUri: string): Promise<string> {
+    try {
+      // Convert the photo URI to base64
+      const response = await fetch(photoUri);
+      const blob = await response.blob();
+      const reader = new FileReader();
+      
+      const base64Promise = new Promise<string>((resolve, reject) => {
+        reader.onload = () => {
+          const base64 = reader.result as string;
+          // Remove the data URL prefix (e.g., "data:image/jpeg;base64,")
+          const base64Data = base64.split(',')[1];
+          resolve(base64Data);
+        };
+        reader.onerror = reject;
+      });
+      
+      reader.readAsDataURL(blob);
+      const base64Data = await base64Promise;
+
+      // Generate a unique filename
+      const fileName = `photo_${Date.now()}.jpg`;
+
+      // Upload to blob storage
+      const uploadResponse = await fetch(`${API_BASE_URL}/blobUpload`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fileName,
+          fileBase64: base64Data,
+          tag: 'New Photo' // You can customize this or pass it as a parameter
+        })
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error('Failed to upload photo');
+      }
+
+      const { url } = await uploadResponse.json();
+      return url;
+    } catch (error) {
+      console.error('Error uploading photo:', error);
+      throw error;
+    }
   }
 }; 

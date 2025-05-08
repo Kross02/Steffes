@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { ThemedView } from '@/components/ThemedView';
@@ -11,6 +11,21 @@ export default function PhotoReviewScreen() {
   const router = useRouter();
   const { photoUri, tag, lotId } = useLocalSearchParams<{ photoUri: string; tag: string; lotId: string }>();
   const [error, setError] = useState<string | null>(null);
+  const [lot, setLot] = useState<any>(null);
+
+  useEffect(() => {
+    loadLot();
+  }, [lotId]);
+
+  const loadLot = async () => {
+    try {
+      const lotData = await azureService.getLotById(lotId);
+      setLot(lotData);
+    } catch (err) {
+      console.error('Error loading lot:', err);
+      setError('Failed to load lot details');
+    }
+  };
 
   const handleSave = async () => {
     try {
@@ -22,13 +37,16 @@ export default function PhotoReviewScreen() {
         pictures: [...(lot?.pictures || []), {
           id: Date.now().toString(),
           url: photoUrl,
-          tag: 'New Photo',
+          tag: tag || 'New Photo',
           timestamp: new Date().toISOString()
         }]
-      });
+      }, lot?.category);
 
       // Return to photos screen
-      router.back();
+      router.replace({
+        pathname: '/lot/photos',
+        params: { lotId: lotId }
+      });
     } catch (err) {
       console.error('Error saving photo:', err);
       setError('Failed to save photo');
@@ -36,7 +54,10 @@ export default function PhotoReviewScreen() {
   };
 
   const handleDiscard = () => {
-    router.back();
+    router.replace({
+        pathname: '/lot/camera',
+        params: { lotId: lotId }
+    });
   };
 
   return (
@@ -74,6 +95,10 @@ export default function PhotoReviewScreen() {
           </Button>
         </View>
       </View>
+
+      {error && (
+        <ThemedText style={styles.errorText}>{error}</ThemedText>
+      )}
     </ThemedView>
   );
 }
@@ -111,12 +136,16 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     width: '100%',
-    marginTop: 30,
+    marginTop: 20,
   },
   button: {
-    flex: 1,
-    marginHorizontal: 10,
+    minWidth: 120,
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 10,
   },
 }); 

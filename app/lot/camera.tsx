@@ -2,17 +2,19 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { CameraModule } from '@/components/CameraModule';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 
 export default function CameraScreen() {
   const router = useRouter();
+  const { lotId } = useLocalSearchParams<{ lotId: string }>();
 
-  const handlePhotoTaken = (photoData: any) => {
-    router.push({
+  const handlePhotoTaken = (photoData: { uri: string; tag: string | null }) => {
+    router.replace({
       pathname: '/lot/photo-review',
       params: { 
-        photoData: JSON.stringify(photoData),
-        lotId: lotId // Pass the lotId to the review screen
+        photoUri: photoData.uri,
+        tag: photoData.tag || '',
+        lotId: lotId
       }
     });
   };

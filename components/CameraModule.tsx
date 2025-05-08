@@ -2,22 +2,19 @@ import { CameraView, CameraType, CameraMode, useCameraPermissions } from 'expo-c
 import React, { useRef, useState } from 'react';
 import { Button, Pressable, Text, View } from 'react-native';
 import { StyleSheet } from 'react-native';
-import { Image } from "expo-image";
 import { AntDesign } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { FontAwesome6 } from "@expo/vector-icons";
 import SimpleExample from './TagScrollView';
 
 interface CameraModuleProps {
-  onPhotoTaken?: (photoUri: string, tag: string | null) => void;
+  onPhotoTaken?: (photoData: { uri: string; tag: string | null }) => void;
 }
 
 export function CameraModule({ onPhotoTaken }: CameraModuleProps) {
     const [permission, requestPermission] = useCameraPermissions();
     const ref = useRef<CameraView>(null);
     const tagRef = useRef<SimpleExample>(null);
-    const [uri, setUri] = useState<string | null>(null);
-    const [selectedTag, setSelectedTag] = useState<string | null>(null);
     const [mode, setMode] = useState<CameraMode>("picture");
     const [facing, setFacing] = useState<CameraType>("back");
     const [recording, setRecording] = useState(false);
@@ -39,11 +36,11 @@ export function CameraModule({ onPhotoTaken }: CameraModuleProps) {
         const photo = await ref.current?.takePictureAsync();
         if (photo) {
             const currentTag = tagRef.current?.state.selectedValue;
-            setSelectedTag(currentTag || null);
-            setUri(photo.uri);
-            
             if (onPhotoTaken) {
-                onPhotoTaken(photo.uri, currentTag || null);
+                onPhotoTaken({
+                    uri: photo.uri,
+                    tag: currentTag || null
+                });
             }
         }
     };
@@ -67,27 +64,8 @@ export function CameraModule({ onPhotoTaken }: CameraModuleProps) {
         setFacing((prev) => (prev === "back" ? "front" : "back"));
     };
 
-    const renderPicture = () => {
-        return (
-            <View>
-                <Image
-                    source={{ uri }}
-                    contentFit="contain"
-                    style={{ width: 300, aspectRatio: 1 }}
-                />
-                {selectedTag && (
-                    <Text style={styles.tagText}>Tagged as: {selectedTag}</Text>
-                )}
-                <Button onPress={() => {
-                    setUri(null);
-                    setSelectedTag(null);
-                }} title="Take another picture" />
-            </View>
-        );
-    };
-
-    const renderCamera = () => {
-        return (
+    return (
+        <View style={styles.container}>
             <CameraView
                 style={styles.camera}
                 ref={ref}
@@ -132,12 +110,6 @@ export function CameraModule({ onPhotoTaken }: CameraModuleProps) {
                 
                 <SimpleExample ref={tagRef} />
             </CameraView>
-        );
-    };
-
-    return (
-        <View style={styles.container}>
-            {uri ? renderPicture() : renderCamera()}
         </View>
     );
 }
@@ -179,11 +151,5 @@ const styles = StyleSheet.create({
         width: 70,
         height: 70,
         borderRadius: 50,
-    },
-    tagText: {
-        color: 'black',
-        fontSize: 16,
-        textAlign: 'center',
-        marginTop: 10,
-    },
+    }
 });
