@@ -81,13 +81,14 @@ export const azureService = {
     }
   },
 
-  async updateLot(id: string, lotData: Partial<Lot>): Promise<Lot> {
+  async updateLot(id: string, lotData: Partial<Lot>, category: string): Promise<Lot> {
     try {
       const response = await fetch(`${API_BASE_URL}/lotUpdate/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          'x-ms-documentdb-partitionkey': JSON.stringify([category])
         },
         body: JSON.stringify(lotData)
       });

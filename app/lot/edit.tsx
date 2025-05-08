@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, ScrollView } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { IconButton, Dialog, Portal, Button } from 'react-native-paper';
+import { IconButton, Dialog, Portal, Button, TextInput, Divider } from 'react-native-paper';
 import { azureService } from '@/services/azureService';
 import { Lot } from '@/types/lot';
 
@@ -15,6 +15,14 @@ export default function EditLotScreen() {
   const [error, setError] = useState<string | null>(null);
   const [lot, setLot] = useState<Lot | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+
+  // Form state
+  const [title, setTitle] = useState('');
+  const [lotNumber, setLotNumber] = useState('');
+  const [tagNumber, setTagNumber] = useState('');
+  const [description, setDescription] = useState('');
+  const [category, setCategory] = useState('');
 
   useEffect(() => {
     loadLot();
@@ -24,11 +32,36 @@ export default function EditLotScreen() {
     try {
       const lotData = await azureService.getLotById(lotId);
       setLot(lotData);
+      // Initialize form fields
+      setTitle(lotData.title);
+      setLotNumber(lotData.lotNumber);
+      setTagNumber(lotData.tagNumber);
+      setDescription(lotData.description || '');
+      setCategory(lotData.category || '');
     } catch (err) {
       console.error('Error loading lot:', err);
       setError('Failed to load lot details');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!lot) return;
+
+    try {
+      setError(null);
+      const updatedLot = await azureService.updateLot(lotId, {
+        title,
+        lotNumber,
+        tagNumber,
+        description,
+      }, lot.category);
+      setLot(updatedLot);
+      setIsEditing(false);
+    } catch (err) {
+      console.error('Error updating lot:', err);
+      setError('Failed to update lot. Please try again.');
     }
   };
 
@@ -83,9 +116,89 @@ export default function EditLotScreen() {
         />
       </View>
 
-      <ThemedText>Lot ID: {lotId}</ThemedText>
-      <ThemedText>Category: {lot.category}</ThemedText>
-      <ThemedText>This screen will be implemented later.</ThemedText>
+      <ScrollView style={styles.content}>
+        <View style={styles.section}>
+          <ThemedText type="subtitle" style={styles.sectionTitle}>Basic Information</ThemedText>
+          
+          <TextInput
+            label="Title"
+            value={title}
+            onChangeText={setTitle}
+            style={styles.input}
+            disabled={!isEditing}
+          />
+          
+          <TextInput
+            label="Lot Number"
+            value={lotNumber}
+            onChangeText={setLotNumber}
+            style={styles.input}
+            disabled={!isEditing}
+          />
+          
+          <TextInput
+            label="Tag Number"
+            value={tagNumber}
+            onChangeText={setTagNumber}
+            style={styles.input}
+            disabled={!isEditing}
+          />
+          
+          <TextInput
+            label="Description"
+            value={description}
+            onChangeText={setDescription}
+            style={styles.input}
+            multiline
+            numberOfLines={3}
+            disabled={!isEditing}
+          />
+          
+          <TextInput
+            label="Category"
+            value={category}
+            style={styles.input}
+            disabled={true}
+          />
+        </View>
+
+        <Divider style={styles.divider} />
+
+        <View style={styles.section}>
+          <ThemedText type="subtitle" style={styles.sectionTitle}>Metadata</ThemedText>
+          <ThemedText>Created: {new Date(lot.createdAt).toLocaleString()}</ThemedText>
+          <ThemedText>Last Updated: {new Date(lot.updatedAt).toLocaleString()}</ThemedText>
+          <ThemedText>Type: {lot.type}</ThemedText>
+        </View>
+
+        <View style={styles.buttonContainer}>
+          {isEditing ? (
+            <Button 
+              mode="contained" 
+              onPress={handleSave}
+              style={styles.button}
+            >
+              Save Changes
+            </Button>
+          ) : (
+            <Button 
+              mode="contained" 
+              onPress={() => setIsEditing(true)}
+              style={styles.button}
+            >
+              Edit Information
+            </Button>
+          )}
+          
+          <Button 
+            mode="contained" 
+            onPress={() => console.log('Edit photos pressed')}
+            style={styles.button}
+          >
+            Edit Photos
+          </Button>
+        </View>
+      </ScrollView>
 
       {error && (
         <ThemedText style={styles.errorText}>{error}</ThemedText>
@@ -124,13 +237,37 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
+    paddingHorizontal: 10,
   },
   header: {
-    flex: 1,
-    textAlign: 'center',
+    fontSize: 24,
+    fontWeight: 'bold',
   },
   deleteButton: {
     margin: 0,
+  },
+  content: {
+    flex: 1,
+  },
+  section: {
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    marginBottom: 10,
+  },
+  input: {
+    marginBottom: 10,
+    backgroundColor: 'transparent',
+  },
+  divider: {
+    marginVertical: 20,
+  },
+  buttonContainer: {
+    marginTop: 20,
+    gap: 10,
+  },
+  button: {
+    marginBottom: 10,
   },
   errorText: {
     color: 'red',

@@ -17,6 +17,7 @@ export default function LotLayout() {
         options={{
           title: 'Edit Lot',
           presentation: 'modal',
+          headerShown: false,
         }}
       />
     </Stack>
