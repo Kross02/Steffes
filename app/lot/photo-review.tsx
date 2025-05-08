@@ -1,18 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Image } from 'expo-image';
+import { azureService } from '@/services/azureService';
 
 export default function PhotoReviewScreen() {
   const router = useRouter();
-  const { photoUri, tag } = useLocalSearchParams<{ photoUri: string; tag: string }>();
+  const { photoUri, tag, lotId } = useLocalSearchParams<{ photoUri: string; tag: string; lotId: string }>();
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSave = () => {
-    // TODO: Save the photo to the lot's photos
-    router.back();
+  const handleSave = async () => {
+    try {
+      // Upload photo to blob storage
+      const photoUrl = await azureService.uploadPhoto(photoUri);
+      
+      // Add photo to lot
+      await azureService.updateLot(lotId, {
+        pictures: [...(lot?.pictures || []), {
+          id: Date.now().toString(),
+          url: photoUrl,
+          tag: 'New Photo',
+          timestamp: new Date().toISOString()
+        }]
+      });
+
+      // Return to photos screen
+      router.back();
+    } catch (err) {
+      console.error('Error saving photo:', err);
+      setError('Failed to save photo');
+    }
   };
 
   const handleDiscard = () => {

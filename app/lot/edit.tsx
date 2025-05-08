@@ -192,7 +192,10 @@ export default function EditLotScreen() {
           
           <Button 
             mode="contained" 
-            onPress={() => console.log('Edit photos pressed')}
+            onPress={() => router.push({
+              pathname: '/lot/photos',
+              params: { lotId: lotId }
+            })}
             style={styles.button}
           >
             Edit Photos

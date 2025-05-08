@@ -1,67 +1,116 @@
-import React from 'react';
-import { StyleSheet, View, ScrollView, Pressable } from 'react-native';
-import { Button } from 'react-native-paper';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Button, IconButton } from 'react-native-paper';
+import { azureService } from '@/services/azureService';
+import { Lot } from '@/types/lot';
 import { Image } from 'expo-image';
 
-// Placeholder data for thumbnails
-const placeholderPhotos = [
-  { id: '1', uri: 'https://picsum.photos/200/200?random=1', tag: 'Front View' },
-  { id: '2', uri: 'https://picsum.photos/200/200?random=2', tag: 'Side View' },
-  { id: '3', uri: 'https://picsum.photos/200/200?random=3', tag: 'Back View' },
-];
-
 export default function PhotosScreen() {
+  const { lotId } = useLocalSearchParams<{ lotId: string }>();
   const router = useRouter();
+  const [lot, setLot] = useState<Lot | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleTakePhoto = () => {
-    router.push('/lot/camera');
+  useEffect(() => {
+    loadLot();
+  }, [lotId]);
+
+  const loadLot = async () => {
+    try {
+      const lotData = await azureService.getLotById(lotId);
+      setLot(lotData);
+    } catch (err) {
+      console.error('Error loading lot:', err);
+      setError('Failed to load lot details');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleThumbnailPress = (photoId: string) => {
+  const handleTakePhoto = () => {
     router.push({
-      pathname: '/lot/[id]/photo-detail',
+      pathname: '/lot/camera',
+      params: { lotId: lotId }
+    });
+  };
+
+  const handlePhotoPress = (photo: any) => {
+    // Navigate to photo detail view
+    router.push({
+      pathname: '/lot/photo-detail',
       params: { 
-        id: '1', // TODO: Get the actual lot ID
-        photoId 
+        lotId: lotId,
+        photoId: photo.id
       }
     });
   };
+
+  if (loading) {
+    return (
+      <ThemedView style={styles.container}>
+        <ThemedText>Loading...</ThemedText>
+      </ThemedView>
+    );
+  }
+
+  if (!lot) {
+    return (
+      <ThemedView style={styles.container}>
+        <ThemedText>Lot not found</ThemedText>
+      </ThemedView>
+    );
+  }
 
   return (
     <ThemedView style={styles.container}>
       <View style={styles.headerContainer}>
         <ThemedText type="title" style={styles.header}>Photos</ThemedText>
+        <IconButton
+          icon="arrow-left"
+          size={24}
+          onPress={() => router.back()}
+        />
       </View>
 
-      <Button 
-        mode="contained" 
+      {error && (
+        <ThemedText style={styles.errorText}>{error}</ThemedText>
+      )}
+
+      <FlatList
+        data={lot.pictures || []}
+        keyExtractor={(item) => item.id}
+        numColumns={3}
+        renderItem={({ item }) => (
+          <TouchableOpacity 
+            style={styles.photoContainer}
+            onPress={() => handlePhotoPress(item)}
+          >
+            <Image
+              source={{ uri: item.url }}
+              style={styles.photo}
+            />
+            <ThemedText style={styles.photoTag}>{item.tag}</ThemedText>
+          </TouchableOpacity>
+        )}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <ThemedText>No photos yet</ThemedText>
+          </View>
+        }
+      />
+
+      <Button
+        mode="contained"
         onPress={handleTakePhoto}
         style={styles.takePhotoButton}
+        icon="camera"
       >
         Take Photo
       </Button>
-
-      <ScrollView style={styles.thumbnailsContainer}>
-        <View style={styles.thumbnailsGrid}>
-          {placeholderPhotos.map((photo) => (
-            <Pressable 
-              key={photo.id}
-              onPress={() => handleThumbnailPress(photo.id)}
-              style={styles.thumbnailWrapper}
-            >
-              <Image
-                source={{ uri: photo.uri }}
-                style={styles.thumbnail}
-                contentFit="cover"
-              />
-              <ThemedText style={styles.thumbnailTag}>{photo.tag}</ThemedText>
-            </Pressable>
-          ))}
-        </View>
-      </ScrollView>
     </ThemedView>
   );
 }
@@ -69,44 +118,49 @@ export default function PhotosScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    padding: 16,
     paddingTop: 50,
   },
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical: 15,
-    paddingHorizontal: 10,
+    marginBottom: 20,
   },
   header: {
     flex: 1,
+    textAlign: 'center',
   },
-  takePhotoButton: {
-    marginHorizontal: 10,
-    marginBottom: 20,
-  },
-  thumbnailsContainer: {
-    flex: 1,
-  },
-  thumbnailsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    padding: 5,
-  },
-  thumbnailWrapper: {
-    width: '33.33%',
-    padding: 5,
-    alignItems: 'center',
-  },
-  thumbnail: {
-    width: '100%',
+  photoContainer: {
+    flex: 1/3,
     aspectRatio: 1,
+    padding: 4,
+  },
+  photo: {
+    width: '100%',
+    height: '100%',
     borderRadius: 8,
   },
-  thumbnailTag: {
-    marginTop: 5,
-    fontSize: 12,
+  photoTag: {
     textAlign: 'center',
+    marginTop: 4,
+    fontSize: 12,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  takePhotoButton: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginBottom: 10,
   },
 }); 

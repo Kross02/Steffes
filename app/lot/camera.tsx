@@ -7,13 +7,12 @@ import { useRouter } from 'expo-router';
 export default function CameraScreen() {
   const router = useRouter();
 
-  const handlePhotoTaken = (photoUri: string, tag: string | null) => {
-    // Navigate to the review screen with the photo data
+  const handlePhotoTaken = (photoData: any) => {
     router.push({
       pathname: '/lot/photo-review',
       params: { 
-        photoUri,
-        tag: tag || ''
+        photoData: JSON.stringify(photoData),
+        lotId: lotId // Pass the lotId to the review screen
       }
     });
   };
