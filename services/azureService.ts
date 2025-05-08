@@ -106,12 +106,13 @@ export const azureService = {
     }
   },
 
-  async deleteLot(id: string): Promise<void> {
+  async deleteLot(id: string, category: string): Promise<void> {
     try {
       const response = await fetch(`${API_BASE_URL}/lotDelete/${id}`, {
         method: 'DELETE',
         headers: {
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          'x-ms-documentdb-partitionkey': JSON.stringify([category])
         }
       });
 
