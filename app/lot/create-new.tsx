@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
-import { TextInput, Button, Menu, IconButton } from 'react-native-paper';
+import { TextInput, Button } from 'react-native-paper';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { useRouter } from 'expo-router';
@@ -15,17 +15,6 @@ export default function CreateNewLotScreen() {
   const [description, setDescription] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [menuVisible, setMenuVisible] = useState(false);
-
-  const openMenu = () => setMenuVisible(true);
-  const closeMenu = () => setMenuVisible(false);
-
-  const handleEditPhotos = () => {
-    closeMenu();
-    router.push('/lot/photos');
-    // Dummy function for now
-    console.log('Edit Photos clicked');
-  };
 
   const handleSubmit = async () => {
     // Basic validation
@@ -73,20 +62,6 @@ export default function CreateNewLotScreen() {
     <ThemedView style={styles.container}>
       <View style={styles.headerContainer}>
         <ThemedText type="title" style={styles.header}>Create Lot</ThemedText>
-        
-        <Menu
-          visible={menuVisible}
-          onDismiss={closeMenu}
-          anchor={
-            <IconButton
-              icon="dots-vertical"
-              size={24}
-              onPress={openMenu}
-            />
-          }
-        >
-          <Menu.Item onPress={handleEditPhotos} title="Edit Photos" />
-        </Menu>
       </View>
       
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -137,26 +112,15 @@ export default function CreateNewLotScreen() {
             numberOfLines={4}
           />
           
-          <View style={styles.buttonContainer}>
-            <Button 
-              mode="outlined" 
-              onPress={() => router.back()} 
-              style={styles.button}
-              disabled={isSubmitting}
-            >
-              Cancel
-            </Button>
-            
-            <Button 
-              mode="contained" 
-              onPress={handleSubmit} 
-              style={styles.button}
-              loading={isSubmitting}
-              disabled={isSubmitting}
-            >
-              Create Lot
-            </Button>
-          </View>
+          <Button
+            mode="contained"
+            onPress={handleSubmit}
+            loading={isSubmitting}
+            disabled={isSubmitting}
+            style={styles.submitButton}
+          >
+            Create Lot
+          </Button>
         </View>
       </ScrollView>
     </ThemedView>
@@ -173,33 +137,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical: 5,
+    marginVertical: 15,
     paddingHorizontal: 10,
   },
   header: {
     flex: 1,
   },
   scrollContent: {
-    padding: 16,
+    flexGrow: 1,
   },
   formContainer: {
-    marginTop: 5,
+    padding: 10,
   },
   input: {
-    marginBottom: 6,
+    marginBottom: 15,
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 5,
-  },
-  button: {
-    flex: 1,
-    marginHorizontal: 5,
+  submitButton: {
+    marginTop: 20,
   },
   errorText: {
     color: 'red',
-    marginBottom: 16,
     textAlign: 'center',
+    marginBottom: 10,
   },
 }); 
