@@ -1,3 +1,75 @@
+# Steffes Mobile App
+
+## Main Features
+- **Lot Management**
+  - Create and edit lots
+  - View lot details and history
+  - Photo capture and management for lots
+  - Photo tagging
+  - Azure integration
+
+- **Inventory Tracking**
+  - N/A
+
+- **Approvals System**
+  - N/A
+
+- **Account Management**
+  - N/A
+
+
+## Setup & Running the App
+
+### Prerequisites
+- Node.js
+- Expo CLI (`npm install -g expo-cli`)
+
+### Running the App
+1. Install dependencies:
+   ```bash
+   npm install
+   npx expo install
+   ```
+2. Start the Expo development server:
+   ```bash
+   npx expo start
+   ```
+3. Use Expo Go app on your phone or an emulator to run the app
+
+## Azure Functions (Local Development)
+
+The project includes local Azure Functions in the `/AzureFunctions` directory. These functions are currently running locally and haven't been deployed to Azure.
+
+### Running Azure Functions Locally
+1. Navigate to the AzureFunctions directory:
+   ```bash
+   cd AzureFunctions
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   npm run build
+   ```
+3. Start the functions locally:
+   ```bash
+   func start
+   ```
+
+### Important Note
+- The Azure Functions are currently running locally for development
+- They need to be deployed to Azure for production use
+- Make sure the functions are running locally when testing the mobile app
+- The mobile app is configured to connect to these local functions
+
+## Development Workflow
+1. Start the Azure Functions locally
+2. Start the Expo app
+3. Make changes and test locally
+4. When ready for production, deploy the Azure Functions to Azure
+
+
+
+
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
